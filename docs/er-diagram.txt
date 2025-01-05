@@ -1,3 +1,4 @@
+
 Table users {
   id INTEGER [pk]
   username VARCHAR(255) [not null]
