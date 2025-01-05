@@ -1,0 +1,107 @@
+Table users {
+  id INTEGER [pk]
+  username VARCHAR(255) [not null]
+  email VARCHAR(255) [unique, not null]
+  oauth_provider VARCHAR(255)
+  oauth_id VARCHAR(255) [unique]
+  created_at DATETIME [default: `now`]
+}
+
+Table characters {
+  id INTEGER [pk]
+  name VARCHAR(255) [not null]
+  description TEXT
+  created_at DATETIME [default: `now`]
+}
+
+Table moves {
+  id INTEGER [pk]
+  character_id INTEGER [ref: > characters.id]
+  name VARCHAR(255) [not null]
+  type VARCHAR(50) [not null]
+  input_sequence TEXT
+  damage INTEGER
+  is_rush BOOLEAN [default: false]
+  is_cancel BOOLEAN [default: false]
+  charge_time INTEGER [default: 0]
+  max_charge_level INTEGER [default: 0]
+}
+
+Table basic_inputs {
+  id INTEGER [pk]
+  input_sequence VARCHAR(255) [not null]
+  description VARCHAR(255)
+}
+
+Table move_inputs {
+  id INTEGER [pk]
+  move_id INTEGER [ref: > moves.id]
+  basic_input_id INTEGER [ref: > basic_inputs.id]
+  sequence_order INTEGER [not null]
+  simultaneous BOOLEAN [default: false]
+}
+
+Table combos {
+  id INTEGER [pk]
+  character_id INTEGER [ref: > characters.id]
+  user_id INTEGER [ref: > users.id]
+  name VARCHAR(255) [not null]
+  damage INTEGER
+  meter_used INTEGER
+  meter_gain INTEGER
+  difficulty VARCHAR(50)
+  created_at DATETIME [default: `now`]
+}
+
+Table combo_inputs {
+  id INTEGER [pk]
+  combo_id INTEGER [ref: > combos.id]
+  basic_input_id INTEGER [ref: > basic_inputs.id]
+  sequence_order INTEGER [not null]
+}
+
+Table combo_moves {
+  id INTEGER [pk]
+  combo_id INTEGER [ref: > combos.id]
+  move_id INTEGER [ref: > moves.id]
+  basic_input_id INTEGER [ref: > basic_inputs.id]
+  sequence_order INTEGER [not null]
+  charge_level INTEGER [default: 0]
+}
+
+Table combo_updates {
+  id INTEGER [pk]
+  combo_id INTEGER [ref: > combos.id]
+  previous_damage INTEGER
+  previous_meter_used INTEGER
+  previous_meter_gain INTEGER
+  updated_at DATETIME [default: `now`]
+}
+
+Table tags {
+  id INTEGER [pk]
+  name VARCHAR(255) [not null]
+}
+
+Table combo_tags {
+  id INTEGER [pk]
+  combo_id INTEGER [ref: > combos.id]
+  tag_id INTEGER [ref: > tags.id]
+}
+
+Table ratings {
+  id INTEGER [pk]
+  combo_id INTEGER [ref: > combos.id]
+  user_id INTEGER [ref: > users.id]
+  rating INTEGER [not null]
+  comment TEXT
+  created_at DATETIME [default: `now`]
+}
+
+Table media_files {
+  id INTEGER [pk]
+  combo_id INTEGER [ref: > combos.id]
+  file_url TEXT [not null]
+  file_type VARCHAR(50) [not null]
+  created_at DATETIME [default: `now`]
+}
